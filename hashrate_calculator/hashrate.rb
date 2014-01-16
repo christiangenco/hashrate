@@ -74,38 +74,36 @@ end
 
 # difficulties_between(1231524905+1, 1262196905 + 1) == [{"x"=>1231524906, "y"=>1.0}, {"x"=>1262196905, "y"=>1.1828995343128408}, {"x"=>1262196906, "y"=>1.1828995343128408}]
 
-exit
 
 # returns the weighted average difficulty between start and stop
 def average_difficulty(start, stop)
+  # puts "> average_difficulty(#{start}, #{stop})"
+
   difficulties = difficulties_between(start, stop)
-  difficulty_time = 0
+  
+  # print "difficulties: "
+  # p difficulties
 
-  puts "difficulties"
-  p difficulties
-
-  # jiggle the intervals with start, stop so we just create a sum
-  difficulties.first["x"] = start
-  difficulties << {
-    "x" => stop,
-    "y" => difficulties.last["y"]
-  }
+  total = 0
 
   0.upto(difficulties.size-2){|i|
     difficulty = difficulties[i]
     time = difficulties[i+1]["x"] - difficulty["x"]
 
-    difficulty_time += difficulty["y"] * time
+    total += difficulty["y"] * time
   }
 
-  # multiply this by hashes and BTC_PER_BLOCK to get BTC earned
-  # units are (block * seconds)/hash
-  1.0/(difficulty_time * 2**32)
+  # return the average
+  total / (stop - start)
 end
 
-puts "======"
-# p difficulty_time(1231006505+1, 1263320105-1)
+# p average_difficulty(1231524905+1, 1231524905+86400) = 1.0
 
+# p average_difficulty(1231524905+1, 1262196905 + 1) == 1.0000000059630783
+
+# p average_difficulty(1231524905+1, 1263320105) == 1.0064611250566535
+
+exit
 
 # input: timespan, Hashes
 # result: BTC earned
@@ -121,6 +119,6 @@ p earning(1231524905, 1231524905+86400, 1 * 1e6)
 
 # should be 502.9142, I think?
 
-binding.pry
+# binding.pry
 
 # Time.at(seconds_since_epoc_integer).to_datetime
