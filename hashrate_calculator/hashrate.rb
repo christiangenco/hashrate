@@ -43,24 +43,38 @@ end
 
 # p difficulty(1262196905+1) == {"x"=>1262196905, "y"=>1.1828995343128408}
 
+# returns a set of points between, and including, start and stop
+# filling in the values at start and stop so that you could sum the
+# differences between the x values and it would == stop-start
 def difficulties_between(start, stop)
+  # puts "> difficulties_between(#{start}, #{stop})"
+
   start_i = difficulty_index(start)
   stop_i  = difficulty_index(stop)
 
-  print "start_i: "
-  p start_i
-  print "stop_i: "
-  p stop_i
+  # print "start_i: "
+  # p start_i
+  # print "stop_i: "
+  # p stop_i
 
-  return [@difficulties[start_i], @difficulties[start_i]] if start_i == stop_i
+  difficulties = @difficulties[start_i..stop_i]
 
-  @difficulties[start_i...stop_i]
+  return [] if difficulties.empty?
+
+  # clone the last entry with the `stop` x-value
+  difficulties << {"x" => stop, "y" => difficulties.last["y"]}
+
+  # bump up the first entry to `start`
+  difficulties.first["x"] = start
+
+  difficulties
 end
 
-# p difficulties_between(1231006505+1, 1263320105-1) == [{"x"=>1231006505, "y"=>1.0}, {"x"=>1231092905, "y"=>0.0}, {"x"=>1231524905, "y"=>1.0}]
+# difficulties_between(1231524905+1, 1231524905+86400) == [{"x"=>1231524906, "y"=>1.0}, {"x"=>1231611305, "y"=>1.0}]
 
-print "difficulties_between: "
-p difficulties_between(1231524905, 1231524905+86400)
+# difficulties_between(1231524905+1, 1262196905 + 1) == [{"x"=>1231524906, "y"=>1.0}, {"x"=>1262196905, "y"=>1.1828995343128408}, {"x"=>1262196906, "y"=>1.1828995343128408}]
+
+exit
 
 # returns the weighted average difficulty between start and stop
 def average_difficulty(start, stop)
