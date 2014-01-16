@@ -103,19 +103,40 @@ end
 
 # p average_difficulty(1231524905+1, 1263320105) == 1.0064611250566535
 
-exit
-
 # input: timespan, Hashes
 # result: BTC earned
 # uses constant 25BTC reward
 BTC_PER_BLOCK = 25
 def earning(start, stop, hashrate)
+  # ensure start and stop are in the right order
+  start, stop = [start, stop].sort
+
+  difficulty = average_difficulty(start, stop)
+  puts "difficulty: #{difficulty}"
+  puts "time: #{(stop-start)}"
+
+  # time to find one share between start and stop (in seconds)
+  # with your hashrate
+  time_for_one_share = (difficulty * 2**32 / hashrate)
+
+  # number of shares we'll find in (stop-start) time
+  expected_shares = (stop-start) / time_for_one_share
+
   # difficulty_time(start, stop) * hashrate * BTC_PER_BLOCK
+  # btc_per_second = average_difficulty(start, stop) * BTC_PER_BLOCK / hashrate
+
+  expected_shares * BTC_PER_BLOCK
 end
 
-# GH = 1e9
-# MH = 1e6
-p earning(1231524905, 1231524905+86400, 1 * 1e6)
+GH = 1e9
+MH = 1e6
+
+# double check here: http://www.bitcoinx.com/profit/
+# difficulty: 1
+# BTC/block: 25
+# hash rate: 1 MH/s
+# Coins per 24h at these conditions == 502.9142 BTC
+p earning(1231524905, 1231524905+86400, 1 * MH) == 502.9141902923584
 
 # should be 502.9142, I think?
 
