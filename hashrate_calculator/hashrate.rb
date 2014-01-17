@@ -1,5 +1,15 @@
 require 'json'
-require 'pry'
+# require 'pry'
+require 'linefit'
+
+class Hashrate
+  def initialize
+    url = "https://blockchain.info/charts/difficulty?showDataPoints=false&timespan=all&show_header=true&daysAverageString=1&scale=0&format=json&address="
+    
+  end
+
+end
+
 
 # consolidate the json to just the dates the difficulty changed
 data = JSON.parse(File.read('difficulties.json'))
@@ -9,6 +19,9 @@ data.values.first.each{|value|
     @difficulties << value
   end
 }
+
+
+# binding.pry
 
 # [{"x"=>1231006505, "y"=>1.0},
 #  {"x"=>1231092905, "y"=>0.0},
@@ -42,6 +55,59 @@ def difficulty(time)
 end
 
 # p difficulty(1262196905+1) == {"x"=>1262196905, "y"=>1.1828995343128408}
+
+# add in expected future values for the next 6 months
+# based on the last 12 months
+def extrapolate(months_ahead=6, months_ago=12)
+  index = difficulty_index(Time.new.to_i - 60 * 60 * 24 * 30 * months_ago)
+  past = @difficulties[index..-1]
+  x = past.map{|o| o["x"]}
+  y = past.map{|o| Math.log2 o["y"]}
+
+  lineFit = LineFit.new
+  lineFit.setData(x,y)
+
+  @intercept, @slope = lineFit.coefficients
+
+  def y(x)
+    2 ** (@slope * x + @intercept)
+  end
+
+  # {
+  #   intercept: intercept,
+  #   slope: slope,
+  #   rSquared: lineFit.rSquared,
+  #   meanSqError: lineFit.meanSqError
+  # }
+
+  # calculate average interval
+  intervals = []
+  0.upto(past.size-2){|i|
+    intervals << past[i+1]["x"] - past[i]["x"]
+  }
+  average_interval = intervals.inject{|a,b| a+b}/intervals.size
+
+  difficulties = []
+
+  t = past.last["x"]
+  future_date = t + 60 * 60 * 24 * 30 * months_ahead
+  while t < future_date
+    difficulties << {
+      "x" => t,
+      "y" => y(t)
+    }
+    t += average_interval
+  end
+
+  difficulties
+end
+
+# add 12 months in the future based on the last 12 months
+@difficulties << extrapolate(12, 12)
+
+# binding.pry
+
+exit
 
 # returns a set of points between, and including, start and stop
 # filling in the values at start and stop so that you could sum the
@@ -108,8 +174,14 @@ end
 # uses constant 25BTC reward
 BTC_PER_BLOCK = 25
 def earning(start, stop, hashrate)
-  # ensure start and stop are in the right order
-  start, stop = [start, stop].sort
+  # ensure start and stop are in the right format and order
+  start, stop = [start, stop].map{|t|
+    # convert datetime to time
+    t = t.to_time if t.respond_to? :to_time
+
+    # convert time to unix timestamp
+    t.to_i
+  }.sort
 
   difficulty = average_difficulty(start, stop)
   puts "difficulty: #{difficulty}"
@@ -136,7 +208,14 @@ MH = 1e6
 # BTC/block: 25
 # hash rate: 1 MH/s
 # Coins per 24h at these conditions == 502.9142 BTC
-p earning(1231524905, 1231524905+86400, 1 * MH) == 502.9141902923584
+# p earning(1231524905, 1231524905+86400, 1 * MH) == 502.9141902923584
+
+
+t = @difficulties[-2]["x"]
+
+p earning(t - (60 * 60 * 24 * 30), t - 1, 1000 * GH)
+
+
 
 # should be 502.9142, I think?
 
