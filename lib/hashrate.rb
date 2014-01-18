@@ -1,17 +1,20 @@
-require 'json'
-# require 'pry'
-require 'linefit'
-require 'open-uri'
-
 class Hashrate
   BTC_PER_BLOCK = 25
   MH = 1e6
   GH = 1e9
   TH = 1e12
 
-  # input: timespan, Hashes
-  # result: BTC earned
-  # uses constant 25BTC reward
+  # Calculate expected earnings for a bitcoin miner
+  # based on a timespan and hashrate.
+  # 
+  # Example (six months ago to now with 100 GH/s): 
+  #   >> Hashrate.earning(Time.new.to_i - (60 * 60 * 24 * 30 * 6), Time.new.to_i, 1000 * Hashrate::GH)
+  #   => 201.08229099734106
+  # 
+  # Arguments:
+  #   start: starting mining time
+  #   stop: stopping mining time
+  #   hashrate: rate of mining in hashes per second
   def self.earning(start, stop, hashrate)
     # make sure this is loaded before doing anything else
     # (mmmm, spaghetti)
@@ -27,8 +30,8 @@ class Hashrate
     }.sort
 
     difficulty = self.average_difficulty(start, stop)
-    puts "difficulty: #{difficulty}"
-    puts "time: #{(stop-start)}"
+    # puts "difficulty: #{difficulty}"
+    # puts "time: #{(stop-start)}"
 
     # time to find one share between start and stop (in seconds)
     # with your hashrate
@@ -137,7 +140,7 @@ class Hashrate
       intervals << past[i+1]["x"] - past[i]["x"]
     }
     average_interval = intervals.inject{|a,b| a+b}/intervals.size
-    puts "average: #{average_interval}"
+    # puts "average: #{average_interval}"
 
     difficulties = []
 
