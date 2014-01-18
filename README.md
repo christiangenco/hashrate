@@ -7,7 +7,9 @@ Uses difficulty data from the [blockchain.info API](https://blockchain.info/char
 
 If used in production, I strongly encourage these results to be verified with the [bitcoinx profit calculator](http://www.bitcoinx.com/profit/).
 
-Note: this calculator currently uses a static 25 bitcoin reward. It won't work very well for calculations [before 2013 or after 2016](https://en.bitcoin.it/wiki/Controlled_Currency_Supply).
+Note: this calculator currently uses a static 25 bitcoin reward. It won't work very well for calculations [before 2013 or after 2016](https://en.bitcoin.it/wiki/Controlled_Currency_Supply). 
+
+Note also that I designed this to be used in Rails, so it caches the json from blockchain's API for six hours before requesting it again.
 
 ## Example Usage
 
