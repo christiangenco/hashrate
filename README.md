@@ -5,7 +5,7 @@ Bitcoin mining profit calculator based on difficulty.
 
 Uses difficulty data from the [blockchain.info API](https://blockchain.info/charts/difficulty) and extrapolates data with simple linear regression (via. [linefit](https://github.com/escline/linefit)).
 
-I strongly encourage the user to verify these results with the [bitcoinx profit calculator](http://www.bitcoinx.com/profit/).
+If used in production, I strongly encourage these results to be verified with the [bitcoinx profit calculator](http://www.bitcoinx.com/profit/).
 
 Note: this calculator currently uses a static 25 bitcoin reward. It won't work very well for calculations [before 2013 or after 2016](https://en.bitcoin.it/wiki/Controlled_Currency_Supply).
 
