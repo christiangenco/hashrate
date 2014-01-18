@@ -1,3 +1,7 @@
+require 'open-uri'
+require 'json'
+require 'linefit'
+
 class Hashrate
   BTC_PER_BLOCK = 25
   MH = 1e6

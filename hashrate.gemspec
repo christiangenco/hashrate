@@ -7,10 +7,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Christian Genco"]
   s.email       = 'christian.genco@gmail.com'
   s.files       = ["lib/hashrate.rb"]
-  s.homepage    =
-    'http://rubygems.org/gems/hola'
+  s.homepage    = 'https://github.com/christiangenco/hashrate'
   s.license       = 'MIT'
-  s.add_runtime_dependency 'json'
-  s.add_runtime_dependency 'linefit'
-  s.add_runtime_dependency 'open-uri'
+  s.add_dependency 'json', '> 1.7'
+  s.add_dependency 'linefit', '~> 0.3.1'
 end
