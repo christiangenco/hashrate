@@ -11,6 +11,14 @@ Note: this calculator currently uses a static 25 bitcoin reward. It won't work v
 
 Note also that I designed this to be used in Rails, so it caches the json from blockchain's API for six hours before requesting it again.
 
+## Installation
+
+    $ gem install hashrate
+    
+Or, if used in a gemfile (like in Rails):
+
+    gem 'hashrate'
+
 ## Example Usage
 
 How much would a 100 GH/s machine have earned running for the last six months?
